@@ -12,10 +12,6 @@ function loadFile(event) {
     });
 }
 
-function setupFilterOptions() {
-    // This function is no longer needed as we've moved the filter options to HTML
-}
-
 function applySorting() {
     const sortOrder = document.getElementById('sortOrder').value;
     let sortedData = [...originalData];
@@ -86,8 +82,29 @@ function toggleVisibility(index) {
     card.classList.toggle('viewed');
 }
 
-function toggleDarkMode() {
-    document.body.classList.toggle('dark-mode');
+// Dark mode toggle
+const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+
+function switchTheme(e) {
+    if (e.target.checked) {
+        document.body.classList.add('dark-mode');
+        localStorage.setItem('theme', 'dark');
+    } else {
+        document.body.classList.remove('dark-mode');
+        localStorage.setItem('theme', 'light');
+    }    
+}
+
+toggleSwitch.addEventListener('change', switchTheme, false);
+
+// Check for saved user preference, if any, on load of the website
+const currentTheme = localStorage.getItem('theme');
+if (currentTheme) {
+    document.body.classList[currentTheme === 'dark' ? 'add' : 'remove']('dark-mode');
+
+    if (currentTheme === 'dark') {
+        toggleSwitch.checked = true;
+    }
 }
 
 // Initialize
