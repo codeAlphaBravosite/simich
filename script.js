@@ -6,6 +6,7 @@ function loadFile(event) {
         header: true,
         complete: function(results) {
             originalData = results.data;
+            console.log("Loaded data:", originalData);
             displayCards(originalData);
             setupFilterOptions();
         }
@@ -27,25 +28,43 @@ function setupFilterOptions() {
 
 function applySorting() {
     const sortOrder = document.getElementById('sortOrder').value;
+    console.log("Applying sort order:", sortOrder);
+    
     let sortedData = [...originalData];
 
     if (sortOrder !== 'none') {
         sortedData.sort((a, b) => {
             const subsA = parseSubscribers(a['Subscribers']);
             const subsB = parseSubscribers(b['Subscribers']);
+            console.log(`Comparing: ${a['Channel Name']} (${subsA}) vs ${b['Channel Name']} (${subsB})`);
             return sortOrder === 'ascending' ? subsA - subsB : subsB - subsA;
         });
     }
 
+    console.log("Sorted data:", sortedData);
     displayCards(sortedData);
 }
 
 function parseSubscribers(subString) {
-    // Remove any non-numeric characters except decimal point
-    const cleanString = subString.replace(/[^\d.]/g, '');
+    if (!subString) return 0;
     
-    // Parse the string as a float and convert to integer
-    return parseInt(parseFloat(cleanString) * 1000);
+    // Remove any commas and convert K/M/B to actual numbers
+    subString = subString.replace(/,/g, '').toUpperCase();
+    
+    let multiplier = 1;
+    if (subString.endsWith('K')) {
+        multiplier = 1000;
+        subString = subString.slice(0, -1);
+    } else if (subString.endsWith('M')) {
+        multiplier = 1000000;
+        subString = subString.slice(0, -1);
+    } else if (subString.endsWith('B')) {
+        multiplier = 1000000000;
+        subString = subString.slice(0, -1);
+    }
+    
+    const number = parseFloat(subString);
+    return isNaN(number) ? 0 : Math.round(number * multiplier);
 }
 
 function displayCards(data) {
