@@ -8,9 +8,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 </head>
 <body>
-    <h1>Similar YT Channels Viewer (upload csv to start)</h1>
+    <h1>Similar YT Channels Viewer</h1>
     <input type="file" id="csvFileInput" accept=".csv" onchange="loadFile(event)">
+    
+    <div id="filterContainer">
+        <label for="sortOrder">Sort by Subscribers:</label>
+        <select id="sortOrder" onchange="applySorting()">
+            <option value="none">None</option>
+            <option value="ascending">Ascending</option>
+            <option value="descending">Descending</option>
+        </select>
+        <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+    </div>
+
     <div id="cards"></div>
+
     <script src="script.js"></script>
 </body>
 </html>
