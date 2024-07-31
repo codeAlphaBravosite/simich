@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Similar YT Channels Viewer</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 </head>
 <body>
     <div class="theme-switch-wrapper">
@@ -13,13 +12,13 @@
             <input type="checkbox" id="checkbox" />
             <div class="slider round"></div>
         </label>
-        <em>Dark Mode</em>
     </div>
 
     <h1>Similar YT Channels Viewer</h1>
+
     <input type="file" id="csvFileInput" accept=".csv" onchange="loadFile(event)">
-    
-    <div id="filterContainer">
+
+    <div id="filterContainer" style="display: none;">
         <label for="sortOrder">Sort by Subscribers:</label>
         <select id="sortOrder" onchange="applySorting()">
             <option value="none">None</option>
@@ -30,6 +29,7 @@
 
     <div id="cards"></div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
