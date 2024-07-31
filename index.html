@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Similar YT Channels</title>
+    <title>Similar YT Channels Viewer</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 </head>
 <body>
     <h1>Similar YT Channels Viewer (upload csv to start)</h1>
-    <input type="file" id="csvFileInput" accept=".csv" onchange="loadFile(event)" />
+    <input type="file" id="csvFileInput" accept=".csv" onchange="loadFile(event)">
     <div id="cards"></div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
