@@ -31,13 +31,21 @@ function applySorting() {
 
     if (sortOrder !== 'none') {
         sortedData.sort((a, b) => {
-            const subsA = parseInt(a['Subscribers'].replace(/,/g, ''));
-            const subsB = parseInt(b['Subscribers'].replace(/,/g, ''));
+            const subsA = parseSubscribers(a['Subscribers']);
+            const subsB = parseSubscribers(b['Subscribers']);
             return sortOrder === 'ascending' ? subsA - subsB : subsB - subsA;
         });
     }
 
     displayCards(sortedData);
+}
+
+function parseSubscribers(subString) {
+    // Remove any non-numeric characters except decimal point
+    const cleanString = subString.replace(/[^\d.]/g, '');
+    
+    // Parse the string as a float and convert to integer
+    return parseInt(parseFloat(cleanString) * 1000);
 }
 
 function displayCards(data) {
