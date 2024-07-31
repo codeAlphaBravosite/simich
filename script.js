@@ -7,23 +7,13 @@ function loadFile(event) {
         complete: function(results) {
             originalData = results.data;
             displayCards(originalData);
-            setupFilterOptions();
+            document.getElementById('filterContainer').style.display = 'block';
         }
     });
 }
 
 function setupFilterOptions() {
-    const filterContainer = document.createElement('div');
-    filterContainer.innerHTML = `
-        <label for="sortOrder">Sort by Subscribers:</label>
-        <select id="sortOrder" onchange="applySorting()">
-            <option value="none">None</option>
-            <option value="ascending">Ascending</option>
-            <option value="descending">Descending</option>
-        </select>
-        <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
-    `;
-    document.body.insertBefore(filterContainer, document.getElementById('cards'));
+    // This function is no longer needed as we've moved the filter options to HTML
 }
 
 function applySorting() {
@@ -81,13 +71,11 @@ function displayCards(data) {
         card.dataset.index = index;
         card.innerHTML = `
             <div class="card-title">${channel['Channel Name']}</div>
-            <div class="card-titlee">${formattedSubs} subscribers</div>
-            <div><a href="https://www.youtube.com/channel/${channel['channelId']}" target="_blank">visit channel</a></div>
-            <div>
-                <label>
-                    <input type="checkbox" onchange="toggleVisibility(${index})"> Viewed?
-                </label>
-            </div>
+            <div class="card-subtitle">${formattedSubs} subscribers</div>
+            <a href="https://www.youtube.com/channel/${channel['channelId']}" target="_blank">visit channel</a>
+            <label>
+                <input type="checkbox" onchange="toggleVisibility(${index})"> Viewed?
+            </label>
         `;
         cardsContainer.appendChild(card);
     });
@@ -95,9 +83,12 @@ function displayCards(data) {
 
 function toggleVisibility(index) {
     const card = document.querySelector(`.card[data-index='${index}']`);
-    card.style.display = card.style.display === 'none' ? '' : 'none';
+    card.classList.toggle('viewed');
 }
 
 function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
 }
+
+// Initialize
+document.getElementById('filterContainer').style.display = 'none';
