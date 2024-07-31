@@ -83,6 +83,20 @@ label input[type="checkbox"] {
     height: 16px;
 }
 
+/* New styles for the filter options */
+#sortOrder {
+    padding: 5px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+}
+
+label[for="sortOrder"] {
+    margin-right: 10px;
+    font-weight: 600;
+}
+
 @media (max-width: 600px) {
     #cards {
         grid-template-columns: 1fr;
