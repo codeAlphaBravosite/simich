@@ -87,7 +87,7 @@ body.dark-mode #sortOrder {
 }
 
 .card.viewed {
-    opacity: 0.6;
+    opacity: 0.5;
 }
 
 body.dark-mode .card {
@@ -149,7 +149,7 @@ body.dark-mode label {
 }
 
 label input[type="checkbox"] {
-    margin-right: 8px;
+    margin-right: 2px;
     width: 18px;
     height: 18px;
 }
