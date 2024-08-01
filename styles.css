@@ -38,7 +38,6 @@ body.dark-mode h1 {
     width: 100%;
     max-width: 400px;
     background-color: #fff;
-    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 #csvFileInput:focus, #sortOrder:focus {
@@ -149,7 +148,7 @@ body.dark-mode label {
 }
 
 label input[type="checkbox"] {
-    margin-right: 2px;
+    margin-right: 10px;
     width: 18px;
     height: 18px;
 }
