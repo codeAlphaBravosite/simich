@@ -32,7 +32,7 @@ body.dark-mode h1 {
 #csvFileInput, #sortOrder {
     padding: 12px;
     margin-bottom: 20px;
-    border-radius: 8px;
+    border-radius: 5px;
     border: 1px solid #ddd;
     font-size: 1em;
     width: 100%;
@@ -42,7 +42,6 @@ body.dark-mode h1 {
 
 #csvFileInput:focus, #sortOrder:focus {
     outline: none;
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
 body.dark-mode #csvFileInput,
