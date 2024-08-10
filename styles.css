@@ -29,7 +29,11 @@ body.dark-mode h1 {
     color: #ffffff;
 }
 
-#csvFileInput, #sortOrder {
+#csvFileInput {
+    display: none;
+}
+
+#sortOrder {
     padding: 12px;
     margin-bottom: 20px;
     border-radius: 5px;
@@ -42,6 +46,19 @@ body.dark-mode h1 {
 
 #csvFileInput:focus, #sortOrder:focus {
     outline: none;
+}
+
+.file-input-label {
+    background-color: #FF0000;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.file-input-label:hover {
+    background-color: #FF0000;
 }
 
 body.dark-mode #csvFileInput,
