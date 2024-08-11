@@ -14,14 +14,18 @@
         </label>
     </div>
 
-    <h1>Similar YT Channels Viewer (upload CSV to start)</h1>
+    <h1>Similar YT Channels Viewer</h1>
 
-    <input type="file" id="csvFileInput" accept=".csv" onchange="loadFile(event)">
+    <div class="file-input-wrapper">
+        <input type="file" id="csvFileInput" accept=".csv" onchange="loadFile(event)" />
+        <button class="file-input-button" onclick="document.getElementById('csvFileInput').click()">
+            Upload CSV
+        </button>
+    </div>
 
     <div id="filterContainer" style="display: none;">
-        <label for="sortOrder">‎ Sort by Subscribers</label>
         <select id="sortOrder" onchange="applySorting()">
-            <option value="none">None</option>
+            <option value="none">Sort by Subscribers</option>
             <option value="ascending">Ascending</option>
             <option value="descending">Descending</option>
         </select>
