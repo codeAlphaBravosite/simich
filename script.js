@@ -2,14 +2,22 @@ let originalData = [];
 
 function loadFile(event) {
     const file = event.target.files[0];
-    Papa.parse(file, {
-        header: true,
-        complete: function(results) {
-            originalData = results.data;
-            displayCards(originalData);
-            document.getElementById('filterContainer').style.display = 'block';
-        }
-    });
+    if (file) {
+        updateFileInputButton(file.name);
+        Papa.parse(file, {
+            header: true,
+            complete: function(results) {
+                originalData = results.data;
+                displayCards(originalData);
+                document.getElementById('filterContainer').style.display = 'block';
+            }
+        });
+    }
+}
+
+function updateFileInputButton(fileName) {
+    const button = document.querySelector('.file-input-button');
+    button.textContent = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
 }
 
 function applySorting() {
