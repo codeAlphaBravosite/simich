@@ -272,8 +272,8 @@ body.dark-mode .file-input-button:hover {
 }
 
 body.dark-mode #statisticsContainer {
-    color: #ecf0f1;
-    background-color: #34495e;
+    color: #ffffff;
+    background-color: #121212;
 }
 
 #statisticsContainer p {
