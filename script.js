@@ -11,8 +11,8 @@ function loadFile(event) {
                 originalData = results.data;
                 displayCards(originalData);
                 document.getElementById('filterContainer').style.display = 'block';
-                document.getElementById('statsContainer').style.display = 'block';
-                updateStats();
+                document.getElementById('statisticsContainer').style.display = 'flex';
+                updateStatistics();
             }
         });
     }
@@ -24,23 +24,14 @@ function updateFileInputButton(fileName) {
 }
 
 function applySorting() {
-    const sortOrderSubscribers = document.getElementById('sortOrder').value;
-    const sortOrderViews = document.getElementById('sortViews').value;
+    const sortOrder = document.getElementById('sortOrder').value;
     let sortedData = [...originalData];
 
-    if (sortOrderSubscribers !== 'none') {
+    if (sortOrder !== 'none') {
         sortedData.sort((a, b) => {
             const subsA = parseSubscribers(a['Subscribers']);
             const subsB = parseSubscribers(b['Subscribers']);
-            return sortOrderSubscribers === 'ascending' ? subsA - subsB : subsB - subsA;
-        });
-    }
-
-    if (sortOrderViews !== 'none') {
-        sortedData.sort((a, b) => {
-            const viewsA = parseInt(a['Views'].replace(/,/g, '')) || 0;
-            const viewsB = parseInt(b['Views'].replace(/,/g, '')) || 0;
-            return sortOrderViews === 'ascending' ? viewsA - viewsB : viewsB - viewsA;
+            return sortOrder === 'ascending' ? subsA - subsB : subsB - subsA;
         });
     }
 
@@ -87,29 +78,29 @@ function displayCards(data) {
         card.dataset.index = index;
         card.innerHTML = `
             <div class="card-title">${channel['Channel Name']}</div>
-            <div class="card-subtitle">${formattedSubs} subscribers • ${channel['Views']} views</div>
+            <div class="card-subtitle">${formattedSubs} subscribers</div>
             <a href="https://www.youtube.com/channel/${channel['channelId']}" target="_blank">visit channel</a>
             <label>
-                <input type="checkbox" onchange="toggleVisibility(${index})"> Viewed?
+                <input type="checkbox" onchange="toggleVisibility(${index})" ${channel.viewed ? 'checked' : ''}> Viewed?
             </label>
         `;
         cardsContainer.appendChild(card);
     });
-    updateStats();
+    updateStatistics();
 }
 
 function toggleVisibility(index) {
     const card = document.querySelector(`.card[data-index='${index}']`);
-    const checkbox = card.querySelector('input[type="checkbox"]');
     card.classList.toggle('viewed');
-    viewedChannels += checkbox.checked ? 1 : -1;
-    updateStats();
+    originalData[index].viewed = !originalData[index].viewed;
+    updateStatistics();
 }
 
-function updateStats() {
+function updateStatistics() {
     const totalChannels = originalData.length;
+    viewedChannels = originalData.filter(channel => channel.viewed).length;
     const remainingChannels = totalChannels - viewedChannels;
-    
+
     document.getElementById('totalChannels').textContent = totalChannels;
     document.getElementById('viewedChannels').textContent = viewedChannels;
     document.getElementById('remainingChannels').textContent = remainingChannels;
@@ -131,4 +122,15 @@ function switchTheme(e) {
 toggleSwitch.addEventListener('change', switchTheme, false);
 
 // Check for saved user preference, if any, on load of the website
-const currentTheme = localStorage.
+const currentTheme = localStorage.getItem('theme');
+if (currentTheme) {
+    document.body.classList[currentTheme === 'dark' ? 'add' : 'remove']('dark-mode');
+
+    if (currentTheme === 'dark') {
+        toggleSwitch.checked = true;
+    }
+}
+
+// Initialize
+document.getElementById('filterContainer').style.display = 'none';
+document.getElementById('statisticsContainer').style.display = 'none';
