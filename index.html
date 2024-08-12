@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+    <div id="statisticsContainer" style="display: none;">
+        <p>Total Channels: <span id="totalChannels">0</span></p>
+        <p>Viewed: <span id="viewedChannels">0</span></p>
+        <p>Remaining: <span id="remainingChannels">0</span></p>
+    </div>
+    
     <div class="theme-switch-wrapper">
         <label class="theme-switch" for="checkbox">
             <input type="checkbox" id="checkbox" />
@@ -14,7 +21,7 @@
         </label>
     </div>
 
-    <h1>YouTube Video Viewer</h1>
+    <h1>Similar YT Channel Viewer</h1>
 
     <div class="file-input-wrapper">
         <label for="csvFileInput" class="file-input-button">Upload CSV</label>
@@ -27,12 +34,6 @@
             <option value="ascending">Ascending</option>
             <option value="descending">Descending</option>
         </select>
-    </div>
-
-    <div id="statisticsContainer" style="display: none;">
-        <p>Total Channels: <span id="totalChannels">0</span></p>
-        <p>Viewed: <span id="viewedChannels">0</span></p>
-        <p>Remaining: <span id="remainingChannels">0</span></p>
     </div>
 
     <div id="cards"></div>
