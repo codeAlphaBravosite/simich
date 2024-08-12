@@ -11,8 +11,7 @@ function loadFile(event) {
                 originalData = results.data;
                 displayCards(originalData);
                 document.getElementById('filterContainer').style.display = 'block';
-                document.getElementById('statisticsContainer').style.display = 'flex';
-                updateStatistics();
+                initializeStatistics();
             }
         });
     }
@@ -134,3 +133,70 @@ if (currentTheme) {
 // Initialize
 document.getElementById('filterContainer').style.display = 'none';
 document.getElementById('statisticsContainer').style.display = 'none';
+
+// ... (keep all existing code) ...
+
+// Add these new functions and event listener at the end of the file
+
+function makeStatisticsSticky() {
+    const statisticsContainer = document.getElementById('statisticsContainer');
+    const placeholder = document.getElementById('statisticsPlaceholder');
+    const statsRect = statisticsContainer.getBoundingClientRect();
+    const statsTop = statsRect.top;
+
+    if (window.pageYOffset > statsTop) {
+        if (!statisticsContainer.classList.contains('sticky')) {
+            statisticsContainer.classList.add('sticky');
+            placeholder.style.height = `${statsRect.height}px`;
+        }
+    } else {
+        statisticsContainer.classList.remove('sticky');
+        placeholder.style.height = '0';
+    }
+}
+
+// Throttle function to limit the rate at which a function can fire
+function throttle(func, limit) {
+    let inThrottle;
+    return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    }
+}
+
+// Add event listener for scroll
+window.addEventListener('scroll', throttle(makeStatisticsSticky, 100));
+
+// Call this function after parsing the CSV and displaying the statistics
+function initializeStatistics() {
+    document.getElementById('statisticsContainer').style.display = 'flex';
+    const placeholder = document.createElement('div');
+    placeholder.id = 'statisticsPlaceholder';
+    document.getElementById('statisticsContainer').insertAdjacentElement('beforebegin', placeholder);
+    updateStatistics();
+    makeStatisticsSticky();
+}
+
+// Update the loadFile function to call initializeStatistics
+function loadFile(event) {
+    const file = event.target.files[0];
+    if (file) {
+        updateFileInputButton(file.name);
+        Papa.parse(file, {
+            header: true,
+            complete: function(results) {
+                originalData = results.data;
+                displayCards(originalData);
+                document.getElementById('filterContainer').style.display = 'block';
+                initializeStatistics();
+            }
+        });
+    }
+}
+
+// ... (keep all existing code) ...
