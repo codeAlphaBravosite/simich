@@ -247,14 +247,30 @@ body.dark-mode .file-input-button:hover {
 }
 
 #statisticsContainer {
-    color: #2c3e50;
+    background-color: #2c3e50;
+    color: #ecf0f1;
     padding: 15px;
-    margin-bottom: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
     text-align: center;
     display: flex;
     justify-content: space-around;
     max-width: 400px;
     width: 100%;
+    transition: position 0.3s, top 0.3s;
+}
+
+#statisticsContainer.sticky {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode #statisticsContainer {
+    background-color: #34495e;
 }
 
 #statisticsContainer p {
@@ -267,6 +283,11 @@ body.dark-mode .file-input-button:hover {
     font-size: 1.1em;
 }
 
+#statisticsPlaceholder {
+    height: 0;
+    transition: height 0.3s;
+}
+
 @media (max-width: 600px) {
     #cards {
         grid-template-columns: 1fr;
@@ -274,5 +295,9 @@ body.dark-mode .file-input-button:hover {
     
     h1 {
         font-size: 2em;
+    }
+
+    #statisticsContainer {
+        max-width: 90%;
     }
 }
