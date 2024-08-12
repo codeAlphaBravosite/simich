@@ -249,8 +249,8 @@ body.dark-mode .file-input-button:hover {
 }
 
 #statisticsContainer {
-    background-color: #2c3e50;
-    color: #ecf0f1;
+    background-color: #f5f5f5;
+    color: #2c3e50;
     padding: 5px;
     border-radius: 0px;
     margin-bottom: 10px;
@@ -265,7 +265,6 @@ body.dark-mode .file-input-button:hover {
 #statisticsContainer.sticky {
     position: fixed;
     top: 0;
-    bottom: 10;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
@@ -273,6 +272,7 @@ body.dark-mode .file-input-button:hover {
 }
 
 body.dark-mode #statisticsContainer {
+    color: #ecf0f1;
     background-color: #34495e;
 }
 
