@@ -21,18 +21,18 @@
         <input type="file" id="csvFileInput" accept=".csv" onchange="loadFile(event)">
     </div>
 
-    <div id="statisticsContainer" style="display: none;">
-        <p>Total Channels: <span id="totalChannels">0</span></p>
-        <p>Viewed: <span id="viewedChannels">0</span></p>
-        <p>Remaining: <span id="remainingChannels">0</span></p>
-    </div>
-
     <div id="filterContainer" style="display: none;">
         <select id="sortOrder" onchange="applySorting()">
             <option value="none">Sort by Subscribers</option>
             <option value="ascending">Ascending</option>
             <option value="descending">Descending</option>
         </select>
+    </div>
+
+    <div id="statisticsContainer" style="display: none;">
+        <p>Total Channels: <span id="totalChannels">0</span></p>
+        <p>Viewed: <span id="viewedChannels">0</span></p>
+        <p>Remaining: <span id="remainingChannels">0</span></p>
     </div>
 
     <div id="cards"></div>
