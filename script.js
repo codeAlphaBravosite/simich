@@ -1,4 +1,5 @@
 let originalData = [];
+let viewedChannels = 0;
 
 function loadFile(event) {
     const file = event.target.files[0];
@@ -10,6 +11,8 @@ function loadFile(event) {
                 originalData = results.data;
                 displayCards(originalData);
                 document.getElementById('filterContainer').style.display = 'block';
+                document.getElementById('statsContainer').style.display = 'block';
+                updateStats();
             }
         });
     }
@@ -21,14 +24,23 @@ function updateFileInputButton(fileName) {
 }
 
 function applySorting() {
-    const sortOrder = document.getElementById('sortOrder').value;
+    const sortOrderSubscribers = document.getElementById('sortOrder').value;
+    const sortOrderViews = document.getElementById('sortViews').value;
     let sortedData = [...originalData];
 
-    if (sortOrder !== 'none') {
+    if (sortOrderSubscribers !== 'none') {
         sortedData.sort((a, b) => {
             const subsA = parseSubscribers(a['Subscribers']);
             const subsB = parseSubscribers(b['Subscribers']);
-            return sortOrder === 'ascending' ? subsA - subsB : subsB - subsA;
+            return sortOrderSubscribers === 'ascending' ? subsA - subsB : subsB - subsA;
+        });
+    }
+
+    if (sortOrderViews !== 'none') {
+        sortedData.sort((a, b) => {
+            const viewsA = parseInt(a['Views'].replace(/,/g, '')) || 0;
+            const viewsB = parseInt(b['Views'].replace(/,/g, '')) || 0;
+            return sortOrderViews === 'ascending' ? viewsA - viewsB : viewsB - viewsA;
         });
     }
 
@@ -75,7 +87,7 @@ function displayCards(data) {
         card.dataset.index = index;
         card.innerHTML = `
             <div class="card-title">${channel['Channel Name']}</div>
-            <div class="card-subtitle">${formattedSubs} subscribers</div>
+            <div class="card-subtitle">${formattedSubs} subscribers • ${channel['Views']} views</div>
             <a href="https://www.youtube.com/channel/${channel['channelId']}" target="_blank">visit channel</a>
             <label>
                 <input type="checkbox" onchange="toggleVisibility(${index})"> Viewed?
@@ -83,11 +95,24 @@ function displayCards(data) {
         `;
         cardsContainer.appendChild(card);
     });
+    updateStats();
 }
 
 function toggleVisibility(index) {
     const card = document.querySelector(`.card[data-index='${index}']`);
+    const checkbox = card.querySelector('input[type="checkbox"]');
     card.classList.toggle('viewed');
+    viewedChannels += checkbox.checked ? 1 : -1;
+    updateStats();
+}
+
+function updateStats() {
+    const totalChannels = originalData.length;
+    const remainingChannels = totalChannels - viewedChannels;
+    
+    document.getElementById('totalChannels').textContent = totalChannels;
+    document.getElementById('viewedChannels').textContent = viewedChannels;
+    document.getElementById('remainingChannels').textContent = remainingChannels;
 }
 
 // Dark mode toggle
@@ -106,14 +131,4 @@ function switchTheme(e) {
 toggleSwitch.addEventListener('change', switchTheme, false);
 
 // Check for saved user preference, if any, on load of the website
-const currentTheme = localStorage.getItem('theme');
-if (currentTheme) {
-    document.body.classList[currentTheme === 'dark' ? 'add' : 'remove']('dark-mode');
-
-    if (currentTheme === 'dark') {
-        toggleSwitch.checked = true;
-    }
-}
-
-// Initialize
-document.getElementById('filterContainer').style.display = 'none';
+const currentTheme = localStorage.
