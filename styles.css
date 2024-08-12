@@ -153,7 +153,7 @@ label input[type="checkbox"] {
 
 .theme-switch-wrapper {
     position: absolute;
-    top: 20px;
+    top: 25px;
     right: 20px;
     display: flex;
     align-items: center;
@@ -264,7 +264,6 @@ body.dark-mode .file-input-button:hover {
 #statisticsContainer.sticky {
     position: fixed;
     top: 0;
-    margin-bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
