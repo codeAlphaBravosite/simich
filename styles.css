@@ -247,10 +247,9 @@ body.dark-mode .file-input-button:hover {
 }
 
 #statisticsContainer {
-    color: #ecf0f1;
+    color: #2c3e50;
     padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     text-align: center;
     display: flex;
     justify-content: space-around;
