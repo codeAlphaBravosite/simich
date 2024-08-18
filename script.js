@@ -8,7 +8,12 @@ function loadFile(event) {
         Papa.parse(file, {
             header: true,
             complete: function(results) {
-                originalData = results.data;
+                originalData = results.data.map(channel => {
+                    if (channel['Channel Name'].length > 25) {
+                        channel['Channel Name'] = channel['Channel Name'].substring(0, 23) + '..';
+                    }
+                    return channel;
+                });
                 displayCards(originalData);
                 document.getElementById('filterContainer').style.display = 'block';
                 initializeStatistics();
@@ -67,24 +72,16 @@ function formatSubscribers(number) {
     }
 }
 
-function truncateChannelName(channelName) {
-    if (channelName.length > 25) {
-        return channelName.substring(0, 23) + '..';
-    }
-    return channelName;
-}
-
 function displayCards(data) {
     const cardsContainer = document.getElementById('cards');
     cardsContainer.innerHTML = '';
     data.forEach((channel, index) => {
         const formattedSubs = formatSubscribers(parseSubscribers(channel['Subscribers']));
-        const truncatedName = truncateChannelName(channel['Channel Name']);
         const card = document.createElement('div');
         card.className = 'card';
         card.dataset.index = index;
         card.innerHTML = `
-            <div class="card-title">${truncatedName}</div>
+            <div class="card-title">${channel['Channel Name']}</div>
             <div class="card-subtitle">${formattedSubs} subscribers</div>
             <a href="https://www.youtube.com/channel/${channel['channelId']}" target="_blank">visit channel</a>
             <label>
