@@ -1,6 +1,8 @@
+// Global Variables
 let originalData = [];
 let viewedChannels = 0;
 
+// Load CSV File
 function loadFile(event) {
     const file = event.target.files[0];
     if (file) {
@@ -11,17 +13,19 @@ function loadFile(event) {
                 originalData = results.data;
                 displayCards(originalData);
                 document.getElementById('filterContainer').style.display = 'block';
-                initializeStatistics(); // Ensure this is called after cards are displayed
+                initializeStatistics();
             }
         });
     }
 }
 
+// Update File Input Button Text
 function updateFileInputButton(fileName) {
     const button = document.querySelector('.file-input-button');
     button.textContent = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
 }
 
+// Apply Sorting
 function applySorting() {
     const sortOrder = document.getElementById('sortOrder').value;
     let sortedData = [...originalData];
@@ -37,6 +41,7 @@ function applySorting() {
     displayCards(sortedData);
 }
 
+// Parse Subscriber String to Number
 function parseSubscribers(subString) {
     if (!subString) return 0;
     subString = subString.replace(/,/g, '').toUpperCase();
@@ -55,6 +60,7 @@ function parseSubscribers(subString) {
     return isNaN(number) ? 0 : Math.round(number * multiplier);
 }
 
+// Format Subscriber Number for Display
 function formatSubscribers(number) {
     if (number >= 1000000000) {
         return (number / 1000000000).toFixed(1) + 'B';
@@ -67,6 +73,7 @@ function formatSubscribers(number) {
     }
 }
 
+// Display Channel Cards
 function displayCards(data) {
     const cardsContainer = document.getElementById('cards');
     cardsContainer.innerHTML = '';
@@ -74,7 +81,7 @@ function displayCards(data) {
         const formattedSubs = formatSubscribers(parseSubscribers(channel['Subscribers']));
         let channelName = channel['Channel Name'];
 
-        // Truncate the channel name if it exceeds 25 characters
+        // Truncate channel name if it exceeds 25 characters
         if (channelName.length > 25) {
             channelName = channelName.substring(0, 23) + '..';
         }
@@ -92,9 +99,10 @@ function displayCards(data) {
         `;
         cardsContainer.appendChild(card);
     });
-    updateStatistics();  // Ensure this is called to update statistics after cards are displayed
+    updateStatistics(); // Update statistics after displaying cards
 }
 
+// Toggle Visibility of Viewed Channels
 function toggleVisibility(index) {
     const card = document.querySelector(`.card[data-index='${index}']`);
     card.classList.toggle('viewed');
@@ -102,6 +110,7 @@ function toggleVisibility(index) {
     updateStatistics();
 }
 
+// Update Statistics
 function updateStatistics() {
     const totalChannels = originalData.length;
     viewedChannels = originalData.filter(channel => channel.viewed).length;
@@ -112,7 +121,7 @@ function updateStatistics() {
     document.getElementById('remainingChannels').textContent = remainingChannels;
 }
 
-// Dark mode toggle
+// Dark Mode Toggle
 const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
 
 function switchTheme(e) {
@@ -122,11 +131,12 @@ function switchTheme(e) {
     } else {
         document.body.classList.remove('dark-mode');
         localStorage.setItem('theme', 'light');
-    }    
+    }
 }
 
 toggleSwitch.addEventListener('change', switchTheme, false);
 
+// Check for saved user preference on load
 const currentTheme = localStorage.getItem('theme');
 if (currentTheme) {
     document.body.classList[currentTheme === 'dark' ? 'add' : 'remove']('dark-mode');
@@ -135,10 +145,17 @@ if (currentTheme) {
     }
 }
 
-// Initialize
-document.getElementById('filterContainer').style.display = 'none';
-document.getElementById('statisticsContainer').style.display = 'none';
+// Initialize Statistics Section
+function initializeStatistics() {
+    document.getElementById('statisticsContainer').style.display = 'flex';
+    const placeholder = document.createElement('div');
+    placeholder.id = 'statisticsPlaceholder';
+    document.getElementById('statisticsContainer').insertAdjacentElement('beforebegin', placeholder);
+    updateStatistics();
+    makeStatisticsSticky();
+}
 
+// Make Statistics Sticky During Scroll
 function makeStatisticsSticky() {
     const statisticsContainer = document.getElementById('statisticsContainer');
     const placeholder = document.getElementById('statisticsPlaceholder');
@@ -156,6 +173,7 @@ function makeStatisticsSticky() {
     }
 }
 
+// Throttle Function for Optimizing Scroll Events
 function throttle(func, limit) {
     let inThrottle;
     return function() {
@@ -169,13 +187,9 @@ function throttle(func, limit) {
     }
 }
 
+// Add Scroll Event Listener for Sticky Statistics
 window.addEventListener('scroll', throttle(makeStatisticsSticky, 100));
 
-function initializeStatistics() {
-    document.getElementById('statisticsContainer').style.display = 'flex';
-    const placeholder = document.createElement('div');
-    placeholder.id = 'statisticsPlaceholder';
-    document.getElementById('statisticsContainer').insertAdjacentElement('beforebegin', placeholder);
-    updateStatistics();  // Ensure the statistics are updated when initialized
-    makeStatisticsSticky();
-}
+// Initial Setup: Hide filter and statistics containers until needed
+document.getElementById('filterContainer').style.display = 'none';
+document.getElementById('statisticsContainer').style.display = 'none';
