@@ -67,6 +67,14 @@ function formatSubscribers(number) {
     }
 }
 
+// Helper function to truncate the title
+function truncateTitle(title) {
+    if (title.length > 25) {
+        return title.slice(0, 23) + '..';
+    }
+    return title;
+}
+
 function displayCards(data) {
     const cardsContainer = document.getElementById('cards');
     cardsContainer.innerHTML = '';
@@ -76,7 +84,7 @@ function displayCards(data) {
         card.className = 'card';
         card.dataset.index = index;
         card.innerHTML = `
-            <div class="card-title">${channel['Channel Name']}</div>
+            <div class="card-title">${truncateTitle(channel['Channel Name'])}</div>
             <div class="card-subtitle">${formattedSubs} subscribers</div>
             <a href="https://www.youtube.com/channel/${channel['channelId']}" target="_blank">visit channel</a>
             <label>
