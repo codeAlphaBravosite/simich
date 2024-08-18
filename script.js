@@ -75,10 +75,17 @@ function displayCards(data) {
         const card = document.createElement('div');
         card.className = 'card';
         card.dataset.index = index;
+
+        // Truncate the channel name if it's longer than 15 characters
+        let channelName = channel['Channel Name'];
+        if (channelName.length > 15) {
+            channelName = channelName.slice(0, 13) + '..';
+        }
+
         card.innerHTML = `
-            <div class="card-title">${channel['Channel Name']}</div>
+            <div class="card-title">${channelName}</div>
             <div class="card-subtitle">${formattedSubs} subscribers</div>
-            <a href="https://www.youtube.com/channel/${channel['channelId']}" target="_blank">visit channel</a>
+            <a href="https://youtube.com/channel/${channel['channelId']}" target="_blank">visit channel</a>
             <label>
                 <input type="checkbox" onchange="toggleVisibility(${index})" ${channel.viewed ? 'checked' : ''}> Viewed?
             </label>
