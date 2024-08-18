@@ -67,12 +67,11 @@ function formatSubscribers(number) {
     }
 }
 
-// Helper function to truncate the title
-function truncateTitle(title) {
-    if (title.length > 25) {
-        return title.slice(0, 23) + '..';
+function truncateTitle(title, maxLength = 25) {
+    if (title.length <= maxLength) {
+        return title;
     }
-    return title;
+    return title.slice(0, 23) + '..';
 }
 
 function displayCards(data) {
@@ -80,11 +79,12 @@ function displayCards(data) {
     cardsContainer.innerHTML = '';
     data.forEach((channel, index) => {
         const formattedSubs = formatSubscribers(parseSubscribers(channel['Subscribers']));
+        const truncatedTitle = truncateTitle(channel['Channel Name']);
         const card = document.createElement('div');
         card.className = 'card';
         card.dataset.index = index;
         card.innerHTML = `
-            <div class="card-title">${truncateTitle(channel['Channel Name'])}</div>
+            <div class="card-title" title="${channel['Channel Name']}">${truncatedTitle}</div>
             <div class="card-subtitle">${formattedSubs} subscribers</div>
             <a href="https://www.youtube.com/channel/${channel['channelId']}" target="_blank">visit channel</a>
             <label>
@@ -113,7 +113,6 @@ function updateStatistics() {
     document.getElementById('remainingChannels').textContent = remainingChannels;
 }
 
-// Dark mode toggle
 const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
 
 function switchTheme(e) {
@@ -128,83 +127,4 @@ function switchTheme(e) {
 
 toggleSwitch.addEventListener('change', switchTheme, false);
 
-// Check for saved user preference, if any, on load of the website
-const currentTheme = localStorage.getItem('theme');
-if (currentTheme) {
-    document.body.classList[currentTheme === 'dark' ? 'add' : 'remove']('dark-mode');
-
-    if (currentTheme === 'dark') {
-        toggleSwitch.checked = true;
-    }
-}
-
-// Initialize
-document.getElementById('filterContainer').style.display = 'none';
-document.getElementById('statisticsContainer').style.display = 'none';
-
-// ... (keep all existing code) ...
-
-// Add these new functions and event listener at the end of the file
-
-function makeStatisticsSticky() {
-    const statisticsContainer = document.getElementById('statisticsContainer');
-    const placeholder = document.getElementById('statisticsPlaceholder');
-    const statsRect = statisticsContainer.getBoundingClientRect();
-    const statsTop = statsRect.top;
-
-    if (window.pageYOffset > statsTop) {
-        if (!statisticsContainer.classList.contains('sticky')) {
-            statisticsContainer.classList.add('sticky');
-            placeholder.style.height = `${statsRect.height}px`;
-        }
-    } else {
-        statisticsContainer.classList.remove('sticky');
-        placeholder.style.height = '0';
-    }
-}
-
-// Throttle function to limit the rate at which a function can fire
-function throttle(func, limit) {
-    let inThrottle;
-    return function() {
-        const args = arguments;
-        const context = this;
-        if (!inThrottle) {
-            func.apply(context, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
-    }
-}
-
-// Add event listener for scroll
-window.addEventListener('scroll', throttle(makeStatisticsSticky, 100));
-
-// Call this function after parsing the CSV and displaying the statistics
-function initializeStatistics() {
-    document.getElementById('statisticsContainer').style.display = 'flex';
-    const placeholder = document.createElement('div');
-    placeholder.id = 'statisticsPlaceholder';
-    document.getElementById('statisticsContainer').insertAdjacentElement('beforebegin', placeholder);
-    updateStatistics();
-    makeStatisticsSticky();
-}
-
-// Update the loadFile function to call initializeStatistics
-function loadFile(event) {
-    const file = event.target.files[0];
-    if (file) {
-        updateFileInputButton(file.name);
-        Papa.parse(file, {
-            header: true,
-            complete: function(results) {
-                originalData = results.data;
-                displayCards(originalData);
-                document.getElementById('filterContainer').style.display = 'block';
-                initializeStatistics();
-            }
-        });
-    }
-}
-
-// ... (keep all existing code) ...
+const currentTheme = localStorage.
