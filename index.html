@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Video Viewer</title>
+    <title>Similar YT Channel Viewer</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
     <div id="statisticsContainer" style="display: none;">
         <p>Total Channels: <span id="totalChannels">0</span></p>
         <p>Viewed: <span id="viewedChannels">0</span></p>
         <p>Remaining: <span id="remainingChannels">0</span></p>
     </div>
-    
+
     <div class="theme-switch-wrapper">
         <label class="theme-switch" for="checkbox">
             <input type="checkbox" id="checkbox" />
@@ -24,8 +23,8 @@
     <h1>Similar YT Channel Viewer</h1>
 
     <div class="file-input-wrapper">
-        <label for="csvFileInput" class="file-input-button">Upload CSV</label>
         <input type="file" id="csvFileInput" accept=".csv" onchange="loadFile(event)">
+        <label for="csvFileInput" class="file-input-button">Upload CSV</label>
     </div>
 
     <div id="filterContainer" style="display: none;">
