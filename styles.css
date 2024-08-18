@@ -97,9 +97,10 @@ body.dark-mode .card {
     font-size: 1.5em;
     margin-bottom: 10px;
     color: #2c3e50;
+    word-break: break-all;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 25ch; /* Optional: Limits the title to 25 characters in width */
+    max-width: 12ch; /* Optional: Limits the title to 25 characters in width */
 }
 
 body.dark-mode .card-title {
