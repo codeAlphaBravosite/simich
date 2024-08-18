@@ -76,7 +76,7 @@ function displayCards(data) {
         card.className = 'card';
         card.dataset.index = index;
         card.innerHTML = `
-            <div class="card-title">${channel['Channel Name']}</div>
+            <div class="card-title">${channel['Channel Name']}.length > 25 ? ${channel['Channel Name']}.substring(0,23) + '..' : ${channel['Channel Name']}</div>
             <div class="card-subtitle">${formattedSubs} subscribers</div>
             <a href="https://www.youtube.com/channel/${channel['channelId']}" target="_blank">visit channel</a>
             <label>
