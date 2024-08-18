@@ -72,13 +72,21 @@ function displayCards(data) {
     cardsContainer.innerHTML = '';
     data.forEach((channel, index) => {
         const formattedSubs = formatSubscribers(parseSubscribers(channel['Subscribers']));
+        let channelName = channel['Channel Name'];
+
+        // Check if the channel name is longer than 25 characters
+        if (channelName.length > 25) {
+            // Truncate to 23 characters and add '..'
+            channelName = channelName.substring(0, 23) + '..';
+        }
+
         const card = document.createElement('div');
         card.className = 'card';
         card.dataset.index = index;
         card.innerHTML = `
-            <div class="card-title">${channel['Channel Name']}.length > 25 ? ${channel['Channel Name']}.substring(0,23) + '..' : ${channel['Channel Name']}</div>
+            <div class="card-title">${channelName}</div>
             <div class="card-subtitle">${formattedSubs} subscribers</div>
-            <a href="https://www.youtube.com/channel/${channel['channelId']}" target="_blank">visit channel</a>
+            <a href="https://youtube.com/channel/${channel['channelId']}" target="_blank">visit channel</a>
             <label>
                 <input type="checkbox" onchange="toggleVisibility(${index})" ${channel.viewed ? 'checked' : ''}> Viewed?
             </label>
@@ -87,6 +95,7 @@ function displayCards(data) {
     });
     updateStatistics();
 }
+
 
 function toggleVisibility(index) {
     const card = document.querySelector(`.card[data-index='${index}']`);
