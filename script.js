@@ -11,7 +11,7 @@ function loadFile(event) {
                 originalData = results.data;
                 displayCards(originalData);
                 document.getElementById('filterContainer').style.display = 'block';
-                initializeStatistics();
+                initializeStatistics(); // Ensure this is called after cards are displayed
             }
         });
     }
@@ -74,9 +74,8 @@ function displayCards(data) {
         const formattedSubs = formatSubscribers(parseSubscribers(channel['Subscribers']));
         let channelName = channel['Channel Name'];
 
-        // Check if the channel name is longer than 25 characters
+        // Truncate the channel name if it exceeds 25 characters
         if (channelName.length > 25) {
-            // Truncate to 23 characters and add '..'
             channelName = channelName.substring(0, 23) + '..';
         }
 
@@ -93,9 +92,8 @@ function displayCards(data) {
         `;
         cardsContainer.appendChild(card);
     });
-    updateStatistics();
+    updateStatistics();  // Ensure this is called to update statistics after cards are displayed
 }
-
 
 function toggleVisibility(index) {
     const card = document.querySelector(`.card[data-index='${index}']`);
@@ -129,11 +127,9 @@ function switchTheme(e) {
 
 toggleSwitch.addEventListener('change', switchTheme, false);
 
-// Check for saved user preference, if any, on load of the website
 const currentTheme = localStorage.getItem('theme');
 if (currentTheme) {
     document.body.classList[currentTheme === 'dark' ? 'add' : 'remove']('dark-mode');
-
     if (currentTheme === 'dark') {
         toggleSwitch.checked = true;
     }
@@ -142,10 +138,6 @@ if (currentTheme) {
 // Initialize
 document.getElementById('filterContainer').style.display = 'none';
 document.getElementById('statisticsContainer').style.display = 'none';
-
-// ... (keep all existing code) ...
-
-// Add these new functions and event listener at the end of the file
 
 function makeStatisticsSticky() {
     const statisticsContainer = document.getElementById('statisticsContainer');
@@ -164,7 +156,6 @@ function makeStatisticsSticky() {
     }
 }
 
-// Throttle function to limit the rate at which a function can fire
 function throttle(func, limit) {
     let inThrottle;
     return function() {
@@ -178,34 +169,13 @@ function throttle(func, limit) {
     }
 }
 
-// Add event listener for scroll
 window.addEventListener('scroll', throttle(makeStatisticsSticky, 100));
 
-// Call this function after parsing the CSV and displaying the statistics
 function initializeStatistics() {
     document.getElementById('statisticsContainer').style.display = 'flex';
     const placeholder = document.createElement('div');
     placeholder.id = 'statisticsPlaceholder';
     document.getElementById('statisticsContainer').insertAdjacentElement('beforebegin', placeholder);
-    updateStatistics();
+    updateStatistics();  // Ensure the statistics are updated when initialized
     makeStatisticsSticky();
 }
-
-// Update the loadFile function to call initializeStatistics
-function loadFile(event) {
-    const file = event.target.files[0];
-    if (file) {
-        updateFileInputButton(file.name);
-        Papa.parse(file, {
-            header: true,
-            complete: function(results) {
-                originalData = results.data;
-                displayCards(originalData);
-                document.getElementById('filterContainer').style.display = 'block';
-                initializeStatistics();
-            }
-        });
-    }
-}
-
-// ... (keep all existing code) ...
