@@ -67,16 +67,24 @@ function formatSubscribers(number) {
     }
 }
 
+function truncateTitle(title, maxLength = 25) {
+    if (title.length <= maxLength) {
+        return title;
+    }
+    return title.slice(0, 23) + '..';
+}
+
 function displayCards(data) {
     const cardsContainer = document.getElementById('cards');
     cardsContainer.innerHTML = '';
     data.forEach((channel, index) => {
         const formattedSubs = formatSubscribers(parseSubscribers(channel['Subscribers']));
+        const truncatedTitle = truncateTitle(channel['Channel Name']);
         const card = document.createElement('div');
         card.className = 'card';
         card.dataset.index = index;
         card.innerHTML = `
-            <div class="card-title">${channel['Channel Name']}</div>
+            <div class="card-title" title="${channel['Channel Name']}">${truncatedTitle}</div>
             <div class="card-subtitle">${formattedSubs} subscribers</div>
             <a href="https://www.youtube.com/channel/${channel['channelId']}" target="_blank">visit channel</a>
             <label>
