@@ -1,4 +1,4 @@
-import { parseSubscribers, formatSubscribers } from '../utils/subscribers.js';
+import { parseSubscribers, formatSubscribers } from './subscribers.js';
 
 export function createCard(channel, index) {
     const formattedSubs = formatSubscribers(parseSubscribers(channel['Subscribers']));
