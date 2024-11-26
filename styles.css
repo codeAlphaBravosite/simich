@@ -10,7 +10,6 @@ body {
     align-items: center;
     min-height: 100vh;
     transition: background-color 0.3s, color 0.3s;
-    position: relative;
 }
 
 body.dark-mode {
@@ -21,11 +20,9 @@ body.dark-mode {
 h1 {
     color: #2c3e50;
     font-size: 2.5em;
-    margin-top: 90px;
+    margin-top: 70px;
     margin-bottom: 20px;
     text-align: center;
-    position: relative;
-    z-index: 999;
 }
 
 body.dark-mode h1 {
@@ -46,6 +43,7 @@ body.dark-mode h1 {
 #csvFileInput:focus, #sortOrder:focus {
     outline: none;
     border-color: #FF0000;
+    box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
 }
 
 body.dark-mode #csvFileInput,
@@ -63,7 +61,6 @@ body.dark-mode #sortOrder {
     margin-top: 5px;
     width: 80%;
     max-width: 400px;
-    z-index: 998;
 }
 
 #cards {
@@ -72,8 +69,7 @@ body.dark-mode #sortOrder {
     gap: 20px;
     width: 100%;
     max-width: 1200px;
-    position: relative;
-    z-index: 997;
+    padding: 0 20px;
 }
 
 .card {
@@ -84,6 +80,8 @@ body.dark-mode #sortOrder {
     display: flex;
     flex-direction: column;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .card:hover {
@@ -93,6 +91,15 @@ body.dark-mode #sortOrder {
 
 .card.viewed {
     opacity: 0.5;
+}
+
+.card.viewed::after {
+    content: '✓';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    color: #4CAF50;
 }
 
 body.dark-mode .card {
@@ -106,12 +113,7 @@ body.dark-mode .card {
     margin-bottom: 10px;
     color: #2c3e50;
     word-break: break-word;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    max-height: 3.6em;
+    line-height: 1.3;
 }
 
 body.dark-mode .card-title {
@@ -129,23 +131,29 @@ body.dark-mode .card-subtitle {
 }
 
 .card a {
-    color: #3498db;
+    color: #FF0000;
     text-decoration: none;
     font-weight: 500;
     transition: color 0.3s;
     margin-bottom: 15px;
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 6px;
+    background-color: rgba(255, 0, 0, 0.1);
 }
 
 .card a:hover {
-    color: #2980b9;
+    color: #FF0000;
+    background-color: rgba(255, 0, 0, 0.2);
 }
 
 body.dark-mode .card a {
-    color: #5dade2;
+    color: #FF0000;
+    background-color: rgba(255, 0, 0, 0.2);
 }
 
 body.dark-mode .card a:hover {
-    color: #3498db;
+    background-color: rgba(255, 0, 0, 0.3);
 }
 
 label {
@@ -162,20 +170,20 @@ body.dark-mode label {
 }
 
 label input[type="checkbox"] {
-    margin-right: 5px;
+    margin-right: 8px;
     width: 18px;
     height: 18px;
     cursor: pointer;
+    accent-color: #FF0000;
 }
 
 .theme-switch-wrapper {
-    position: absolute;
+    position: fixed;
     top: 25px;
     right: 20px;
     display: flex;
     align-items: center;
-    z-index: 1001;
-    transition: all 0.3s ease;
+    z-index: 1000;
 }
 
 .theme-switch {
@@ -229,8 +237,6 @@ input:checked + .slider:before {
 
 .file-input-wrapper {
     margin-bottom: 20px;
-    position: relative;
-    z-index: 998;
 }
 
 #csvFileInput {
@@ -240,48 +246,40 @@ input:checked + .slider:before {
 .file-input-button {
     background-color: #FF0000;
     color: white;
-    padding: 10px 20px;
+    padding: 12px 24px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
-    outline: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .file-input-button:hover {
-    background-color: #cc0000;
+    background-color: #FF0000;
     transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 0, 0, 0.2);
 }
 
 .file-input-button:active {
     transform: translateY(0);
 }
 
-body.dark-mode .file-input-button {
-    color: white;
-    background-color: #FF0000;
-}
-
-body.dark-mode .file-input-button:hover {
-    background-color: #cc0000;
-}
-
 #statisticsContainer {
-    background-color: #f5f5f5;
+    background-color: #fff;
     color: #2c3e50;
-    padding: 10px 20px;
-    border-radius: 0px;
+    padding: 12px 24px;
+    border-radius: 0 0 12px 12px;
     text-align: center;
     display: flex;
     justify-content: space-around;
-    align-items: center;
+    gap: 24px;
+    max-width: 600px;
     width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
     transition: all 0.3s ease;
-    z-index: 1000;
-    box-sizing: border-box;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 #statisticsContainer.sticky {
@@ -289,172 +287,75 @@ body.dark-mode .file-input-button:hover {
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 10px 20px;
+    z-index: 1000;
+    border-radius: 0 0 12px 12px;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translate(-50%, -100%);
+    }
+    to {
+        transform: translate(-50%, 0);
+    }
 }
 
 body.dark-mode #statisticsContainer {
     color: #ffffff;
-    background-color: #121212;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    background-color: #1a1a1a;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 #statisticsContainer p {
     margin: 0;
     font-size: 0.9em;
-    padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 #statisticsContainer span {
     font-weight: bold;
-    font-size: 1.1em;
-    display: block;
-    margin-top: 3px;
+    font-size: 1.2em;
+    color: #FF0000;
+}
+
+body.dark-mode #statisticsContainer span {
+    color: #FF0000;
 }
 
 #statisticsPlaceholder {
-    width: 100%;
     height: 0;
-    transition: height 0.3s ease;
+    transition: height 0.3s;
 }
 
-/* Loading animation for file input */
-.loading .file-input-button {
-    position: relative;
-    overflow: hidden;
-    pointer-events: none;
-}
-
-.loading .file-input-button:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 200%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    animation: loading 1.5s infinite;
-}
-
-@keyframes loading {
-    0% { left: -100%; }
-    100% { left: 100%; }
-}
-
-/* Responsive Design */
-@media (max-width: 600px) {
-    body {
-        padding: 10px;
+@media (max-width: 768px) {
+    #cards {
+        grid-template-columns: 1fr;
+        padding: 0 10px;
     }
-
+    
     h1 {
         font-size: 2em;
-        margin-top: 70px;
+        margin-top: 50px;
+    }
+
+    #statisticsContainer {
+        max-width: 100%;
+        padding: 8px 16px;
+        font-size: 0.9em;
     }
 
     .theme-switch-wrapper {
         top: 15px;
         right: 15px;
     }
+}
 
-    #statisticsContainer {
-        padding: 8px 10px;
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
     }
-
-    #statisticsContainer.sticky {
-        padding: 8px 10px;
-    }
-
-    #statisticsContainer p {
-        font-size: 0.8em;
-    }
-
-    #statisticsContainer span {
-        font-size: 1em;
-    }
-
-    #cards {
-        grid-template-columns: 1fr;
-    }
-
-    .card {
-        padding: 16px;
-    }
-}
-
-.reset-button {
-    background-color: #dc3545;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
-}
-
-.reset-button:hover {
-    background-color: #c82333;
-}
-
-.loading-indicator {
-    text-align: center;
-    padding: 20px;
-}
-
-.spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.error-message {
-    color: #dc3545;
-    text-align: center;
-    padding: 10px;
-    margin: 10px 0;
-}
-
-/* Smooth scrolling for the whole page */
-html {
-    scroll-behavior: smooth;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-body.dark-mode ::-webkit-scrollbar-track {
-    background: #1a1a1a;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-
-body.dark-mode ::-webkit-scrollbar-thumb {
-    background: #666;
-}
-
-body.dark-mode ::-webkit-scrollbar-thumb:hover {
-    background: #888;
         }
