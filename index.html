@@ -73,16 +73,5 @@
 
     <!-- Scripts -->
     <script src="script.js"></script>
-    <script> 
-    function resetAllProgress() {
-    if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
-        localStorage.removeItem('channelData');
-        originalData = originalData.map(channel => ({...channel, viewed: false}));
-        displayCards(originalData);
-        updateStatistics();
-        document.getElementById('resetProgress').style.display = 'none';
-    }
-        }
-    </script>
 </body>
 </html>
