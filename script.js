@@ -1,21 +1,38 @@
-// Global state
 let originalData = [];
 let viewedChannels = 0;
 
-// Load saved data from localStorage on startup
-function initializeLocalStorage() {
-    const savedData = localStorage.getItem('channelData');
-    if (savedData) {
-        originalData = JSON.parse(savedData);
-        displayCards(originalData);
-        document.getElementById('filterContainer').style.display = 'block';
-        initializeStatistics();
+// Local Storage Keys
+const STORAGE_KEYS = {
+    CHANNELS: 'yt_viewer_channels',
+    THEME: 'theme'
+};
+
+// Load saved data on startup
+document.addEventListener('DOMContentLoaded', () => {
+    loadSavedData();
+    initializeTheme();
+});
+
+function loadSavedData() {
+    try {
+        const savedData = localStorage.getItem(STORAGE_KEYS.CHANNELS);
+        if (savedData) {
+            originalData = JSON.parse(savedData);
+            displayCards(originalData);
+            document.getElementById('filterContainer').style.display = 'block';
+            initializeStatistics();
+        }
+    } catch (error) {
+        console.error('Error loading saved data:', error);
     }
 }
 
-// Save data to localStorage
 function saveToLocalStorage() {
-    localStorage.setItem('channelData', JSON.stringify(originalData));
+    try {
+        localStorage.setItem(STORAGE_KEYS.CHANNELS, JSON.stringify(originalData));
+    } catch (error) {
+        console.error('Error saving to local storage:', error);
+    }
 }
 
 function loadFile(event) {
@@ -25,11 +42,20 @@ function loadFile(event) {
         Papa.parse(file, {
             header: true,
             complete: function(results) {
-                originalData = results.data.map(channel => ({
-                    ...channel,
-                    viewed: false // Ensure viewed property exists
-                }));
-                saveToLocalStorage(); // Save immediately after loading
+                // Merge with existing data to prevent duplicates
+                const newData = results.data;
+                const existingIds = new Set(originalData.map(channel => channel.channelId));
+                
+                newData.forEach(channel => {
+                    if (!existingIds.has(channel.channelId)) {
+                        originalData.push({
+                            ...channel,
+                            viewed: false // Initialize new channels as not viewed
+                        });
+                    }
+                });
+
+                saveToLocalStorage();
                 displayCards(originalData);
                 document.getElementById('filterContainer').style.display = 'block';
                 initializeStatistics();
@@ -94,15 +120,12 @@ function displayCards(data) {
     data.forEach((channel, index) => {
         const formattedSubs = formatSubscribers(parseSubscribers(channel['Subscribers']));
         const card = document.createElement('div');
-        card.className = 'card';
-        if (channel.viewed) {
-            card.classList.add('viewed');
-        }
+        card.className = `card ${channel.viewed ? 'viewed' : ''}`;
         card.dataset.index = index;
         card.innerHTML = `
             <div class="card-title">${channel['Channel Name']}</div>
             <div class="card-subtitle">${formattedSubs} subscribers</div>
-            <a href="https://www.youtube.com/channel/${channel['channelId']}" target="_blank">visit channel</a>
+            <a href="https://www.youtube.com/channel/${channel.channelId}" target="_blank" rel="noopener noreferrer">visit channel</a>
             <label>
                 <input type="checkbox" onchange="toggleVisibility(${index})" ${channel.viewed ? 'checked' : ''}> Viewed?
             </label>
@@ -116,8 +139,8 @@ function toggleVisibility(index) {
     const card = document.querySelector(`.card[data-index='${index}']`);
     card.classList.toggle('viewed');
     originalData[index].viewed = !originalData[index].viewed;
+    saveToLocalStorage();
     updateStatistics();
-    saveToLocalStorage(); // Save after toggling visibility
 }
 
 function updateStatistics() {
@@ -130,51 +153,47 @@ function updateStatistics() {
     document.getElementById('remainingChannels').textContent = remainingChannels;
 }
 
-function initializeStatistics() {
-    const statsContainer = document.getElementById('statisticsContainer');
-    const themeSwitch = document.querySelector('.theme-switch-wrapper');
-    
-    statsContainer.style.display = 'flex';
-    
-    // Create placeholder with proper spacing
-    let placeholder = document.getElementById('statisticsPlaceholder');
-    if (!placeholder) {
-        placeholder = document.createElement('div');
-        placeholder.id = 'statisticsPlaceholder';
-        statsContainer.insertAdjacentElement('beforebegin', placeholder);
+// Theme management
+const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+
+function initializeTheme() {
+    const currentTheme = localStorage.getItem(STORAGE_KEYS.THEME);
+    if (currentTheme) {
+        document.body.classList[currentTheme === 'dark' ? 'add' : 'remove']('dark-mode');
+        toggleSwitch.checked = currentTheme === 'dark';
     }
-    
-    updateStatistics();
-    makeStatisticsSticky();
 }
 
+function switchTheme(e) {
+    if (e.target.checked) {
+        document.body.classList.add('dark-mode');
+        localStorage.setItem(STORAGE_KEYS.THEME, 'dark');
+    } else {
+        document.body.classList.remove('dark-mode');
+        localStorage.setItem(STORAGE_KEYS.THEME, 'light');
+    }    
+}
+
+toggleSwitch.addEventListener('change', switchTheme, false);
+
+// Statistics sticky behavior
 function makeStatisticsSticky() {
-    const statsContainer = document.getElementById('statisticsContainer');
-    const themeSwitch = document.querySelector('.theme-switch-wrapper');
+    const statisticsContainer = document.getElementById('statisticsContainer');
     const placeholder = document.getElementById('statisticsPlaceholder');
-    const h1 = document.querySelector('h1');
-    
-    const statsRect = statsContainer.getBoundingClientRect();
-    const h1Rect = h1.getBoundingClientRect();
-    
-    if (window.pageYOffset > statsRect.top) {
-        if (!statsContainer.classList.contains('sticky')) {
-            statsContainer.classList.add('sticky');
+    const statsRect = statisticsContainer.getBoundingClientRect();
+    const statsTop = statsRect.top;
+
+    if (window.pageYOffset > statsTop) {
+        if (!statisticsContainer.classList.contains('sticky')) {
+            statisticsContainer.classList.add('sticky');
             placeholder.style.height = `${statsRect.height}px`;
-            
-            // Ensure theme switch stays visible
-            themeSwitch.style.position = 'fixed';
-            themeSwitch.style.top = `${statsRect.height + 10}px`; // Add padding
         }
     } else {
-        statsContainer.classList.remove('sticky');
+        statisticsContainer.classList.remove('sticky');
         placeholder.style.height = '0';
-        themeSwitch.style.position = 'absolute';
-        themeSwitch.style.top = '25px';
     }
 }
 
-// Throttle function to limit the rate at which a function can fire
 function throttle(func, limit) {
     let inThrottle;
     return function() {
@@ -188,40 +207,15 @@ function throttle(func, limit) {
     }
 }
 
-// Dark mode toggle functionality
-const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+window.addEventListener('scroll', throttle(makeStatisticsSticky, 100));
 
-function switchTheme(e) {
-    if (e.target.checked) {
-        document.body.classList.add('dark-mode');
-        localStorage.setItem('theme', 'dark');
-    } else {
-        document.body.classList.remove('dark-mode');
-        localStorage.setItem('theme', 'light');
-    }    
-}
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize local storage
-    initializeLocalStorage();
-    
-    // Add throttled scroll listener
-    window.addEventListener('scroll', throttle(makeStatisticsSticky, 100));
-    
-    // Initialize theme
-    const currentTheme = localStorage.getItem('theme');
-    if (currentTheme) {
-        document.body.classList[currentTheme === 'dark' ? 'add' : 'remove']('dark-mode');
-        if (currentTheme === 'dark') {
-            toggleSwitch.checked = true;
-        }
+function initializeStatistics() {
+    document.getElementById('statisticsContainer').style.display = 'flex';
+    if (!document.getElementById('statisticsPlaceholder')) {
+        const placeholder = document.createElement('div');
+        placeholder.id = 'statisticsPlaceholder';
+        document.getElementById('statisticsContainer').insertAdjacentElement('beforebegin', placeholder);
     }
-    
-    // Add theme switch event listener
-    toggleSwitch.addEventListener('change', switchTheme, false);
-    
-    // Hide containers initially
-    document.getElementById('filterContainer').style.display = 'none';
-    document.getElementById('statisticsContainer').style.display = 'none';
-});
+    updateStatistics();
+    makeStatisticsSticky();
+}
