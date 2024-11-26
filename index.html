@@ -3,45 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="icon-192x192.png" type="image/png">
-<link rel="shortcut icon" href="icon-192x192.png" type="image/png">
-<link rel="apple-touch-icon" href="icon-192x192.png">
-    <title>YouTube Video Viewer</title>
+    <title>Similar YT Channel Viewer</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- PapaParse for CSV handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 </head>
 <body>
-
-    <div id="statisticsContainer" style="display: none;">
-        <p>Total Channels: <span id="totalChannels">0</span></p>
-        <p>Viewed: <span id="viewedChannels">0</span></p>
-        <p>Remaining: <span id="remainingChannels">0</span></p>
-    </div>
-    
+    <!-- Theme Switch -->
     <div class="theme-switch-wrapper">
-        <label class="theme-switch" for="checkbox">
-            <input type="checkbox" id="checkbox" />
-            <div class="slider round"></div>
+        <label class="theme-switch">
+            <input type="checkbox">
+            <span class="slider round"></span>
         </label>
     </div>
 
-    <h1>Similar YT Channel Viewer</h1>
-
-    <div class="file-input-wrapper">
-        <label for="csvFileInput" class="file-input-button">Upload CSV</label>
-        <input type="file" id="csvFileInput" accept=".csv" onchange="loadFile(event)">
+    <!-- Statistics Container -->
+    <div id="statisticsContainer" style="display: none;">
+        <div>
+            <p>Total: <span id="totalChannels">0</span></p>
+        </div>
+        <div>
+            <p>Viewed: <span id="viewedChannels">0</span></p>
+        </div>
+        <div>
+            <p>Remaining: <span id="remainingChannels">0</span></p>
+        </div>
     </div>
 
-    <div id="filterContainer" style="display: none;">
-        <select id="sortOrder" onchange="applySorting()">
-            <option value="none">Sort by Subscribers</option>
-            <option value="ascending">Ascending</option>
-            <option value="descending">Descending</option>
-        </select>
+    <!-- Main Content -->
+    <main>
+        <h1>Similar YT Channel Viewer</h1>
+
+        <!-- File Input Section -->
+        <div class="file-input-wrapper">
+            <input type="file" id="csvFileInput" accept=".csv" onchange="loadFile(event)" style="display: none;">
+            <button class="file-input-button" onclick="document.getElementById('csvFileInput').click()">
+                Upload CSV
+            </button>
+        </div>
+
+        <!-- Filter Container -->
+        <div id="filterContainer" style="display: none;">
+            <select id="sortOrder" onchange="applySorting()">
+                <option value="none">Sort by Subscribers</option>
+                <option value="ascending">Ascending</option>
+                <option value="descending">Descending</option>
+            </select>
+        </div>
+
+        <!-- Cards Container -->
+        <div id="cards"></div>
+    </main>
+
+    <!-- Progress Reset Button (Optional) -->
+    <div class="reset-container" style="margin-top: 20px; text-align: center;">
+        <button id="resetProgress" onclick="resetAllProgress()" class="reset-button" style="display: none;">
+            Reset Progress
+        </button>
     </div>
 
-    <div id="cards"></div>
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+        <div class="spinner"></div>
+        <p>Processing...</p>
+    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <!-- Error Message Container -->
+    <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+    <!-- Scripts -->
     <script src="script.js"></script>
+    <script> 
+    function resetAllProgress() {
+    if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+        localStorage.removeItem('channelData');
+        originalData = originalData.map(channel => ({...channel, viewed: false}));
+        displayCards(originalData);
+        updateStatistics();
+        document.getElementById('resetProgress').style.display = 'none';
+    }
+        }
+    </script>
 </body>
 </html>
