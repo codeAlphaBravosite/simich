@@ -1,9 +1,9 @@
-import { STORAGE_KEYS, saveToStorage, getFromStorage } from './utils/storage.js';
-import { parseSubscribers } from './utils/subscribers.js';
-import { initializeTheme } from './utils/theme.js';
-import { updateStatistics, initializeStatistics } from './components/statistics.js';
-import { createCard } from './components/card.js';
-import { updateFileInputButton } from './components/fileInput.js';
+import { STORAGE_KEYS, saveToStorage, getFromStorage } from './storage.js';
+import { parseSubscribers } from './subscribers.js';
+import { initializeTheme } from './theme.js';
+import { updateStatistics, initializeStatistics } from './statistics.js';
+import { createCard } from './card.js';
+import { updateFileInputButton } from './fileInput.js';
 
 let channels = [];
 let originalChannels = [];
