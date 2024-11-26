@@ -1,4 +1,4 @@
-let originalData = [];
+let channels = [];
 let viewedChannels = 0;
 
 // Local Storage Keys
@@ -17,8 +17,8 @@ function loadSavedData() {
     try {
         const savedData = localStorage.getItem(STORAGE_KEYS.CHANNELS);
         if (savedData) {
-            originalData = JSON.parse(savedData);
-            displayCards(originalData);
+            channels = JSON.parse(savedData);
+            displayCards(channels);
             document.getElementById('filterContainer').style.display = 'block';
             initializeStatistics();
         }
@@ -29,7 +29,8 @@ function loadSavedData() {
 
 function saveToLocalStorage() {
     try {
-        localStorage.setItem(STORAGE_KEYS.CHANNELS, JSON.stringify(originalData));
+        localStorage.setItem(STORAGE_KEYS.CHANNELS, JSON.stringify(channels));
+        updateStatistics();
     } catch (error) {
         console.error('Error saving to local storage:', error);
     }
@@ -42,21 +43,14 @@ function loadFile(event) {
         Papa.parse(file, {
             header: true,
             complete: function(results) {
-                // Merge with existing data to prevent duplicates
-                const newData = results.data;
-                const existingIds = new Set(originalData.map(channel => channel.channelId));
+                // Reset channels array with new data
+                channels = results.data.map(channel => ({
+                    ...channel,
+                    viewed: false
+                }));
                 
-                newData.forEach(channel => {
-                    if (!existingIds.has(channel.channelId)) {
-                        originalData.push({
-                            ...channel,
-                            viewed: false // Initialize new channels as not viewed
-                        });
-                    }
-                });
-
                 saveToLocalStorage();
-                displayCards(originalData);
+                displayCards(channels);
                 document.getElementById('filterContainer').style.display = 'block';
                 initializeStatistics();
             }
@@ -71,7 +65,7 @@ function updateFileInputButton(fileName) {
 
 function applySorting() {
     const sortOrder = document.getElementById('sortOrder').value;
-    let sortedData = [...originalData];
+    let sortedData = [...channels];
 
     if (sortOrder !== 'none') {
         sortedData.sort((a, b) => {
@@ -79,6 +73,8 @@ function applySorting() {
             const subsB = parseSubscribers(b['Subscribers']);
             return sortOrder === 'ascending' ? subsA - subsB : subsB - subsA;
         });
+        channels = sortedData; // Update the main channels array
+        saveToLocalStorage();
     }
 
     displayCards(sortedData);
@@ -109,9 +105,8 @@ function formatSubscribers(number) {
         return (number / 1000000).toFixed(1) + 'M';
     } else if (number >= 1000) {
         return (number / 1000).toFixed(1) + 'K';
-    } else {
-        return number.toString();
     }
+    return number.toString();
 }
 
 function displayCards(data) {
@@ -138,14 +133,13 @@ function displayCards(data) {
 function toggleVisibility(index) {
     const card = document.querySelector(`.card[data-index='${index}']`);
     card.classList.toggle('viewed');
-    originalData[index].viewed = !originalData[index].viewed;
+    channels[index].viewed = !channels[index].viewed;
     saveToLocalStorage();
-    updateStatistics();
 }
 
 function updateStatistics() {
-    const totalChannels = originalData.length;
-    viewedChannels = originalData.filter(channel => channel.viewed).length;
+    const totalChannels = channels.length;
+    viewedChannels = channels.filter(channel => channel.viewed).length;
     const remainingChannels = totalChannels - viewedChannels;
 
     document.getElementById('totalChannels').textContent = totalChannels;
@@ -218,4 +212,4 @@ function initializeStatistics() {
     }
     updateStatistics();
     makeStatisticsSticky();
-}
+            }
