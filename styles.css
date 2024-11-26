@@ -10,6 +10,7 @@ body {
     align-items: center;
     min-height: 100vh;
     transition: background-color 0.3s, color 0.3s;
+    position: relative;
 }
 
 body.dark-mode {
@@ -20,9 +21,11 @@ body.dark-mode {
 h1 {
     color: #2c3e50;
     font-size: 2.5em;
-    margin-top: 70px;
+    margin-top: 90px;
     margin-bottom: 20px;
     text-align: center;
+    position: relative;
+    z-index: 999;
 }
 
 body.dark-mode h1 {
@@ -42,6 +45,7 @@ body.dark-mode h1 {
 
 #csvFileInput:focus, #sortOrder:focus {
     outline: none;
+    border-color: #FF0000;
 }
 
 body.dark-mode #csvFileInput,
@@ -59,6 +63,7 @@ body.dark-mode #sortOrder {
     margin-top: 5px;
     width: 80%;
     max-width: 400px;
+    z-index: 998;
 }
 
 #cards {
@@ -67,6 +72,8 @@ body.dark-mode #sortOrder {
     gap: 20px;
     width: 100%;
     max-width: 1200px;
+    position: relative;
+    z-index: 997;
 }
 
 .card {
@@ -76,7 +83,7 @@ body.dark-mode #sortOrder {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    transition: transform 0.3s, box-shadow 0.3s, opacity 0.3s;
+    transition: all 0.3s ease;
 }
 
 .card:hover {
@@ -90,6 +97,7 @@ body.dark-mode #sortOrder {
 
 body.dark-mode .card {
     background-color: #2C2C2C;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .card-title {
@@ -97,10 +105,13 @@ body.dark-mode .card {
     font-size: 1.5em;
     margin-bottom: 10px;
     color: #2c3e50;
-    word-break: break-all;
+    word-break: break-word;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 25ch; /* Optional: Limits the title to 25 characters in width */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    max-height: 3.6em;
 }
 
 body.dark-mode .card-title {
@@ -143,6 +154,7 @@ label {
     margin-top: 15px;
     font-size: 0.9em;
     color: #7f8c8d;
+    cursor: pointer;
 }
 
 body.dark-mode label {
@@ -153,6 +165,7 @@ label input[type="checkbox"] {
     margin-right: 5px;
     width: 18px;
     height: 18px;
+    cursor: pointer;
 }
 
 .theme-switch-wrapper {
@@ -161,7 +174,8 @@ label input[type="checkbox"] {
     right: 20px;
     display: flex;
     align-items: center;
-    z-index: 1000;
+    z-index: 1001;
+    transition: all 0.3s ease;
 }
 
 .theme-switch {
@@ -215,6 +229,8 @@ input:checked + .slider:before {
 
 .file-input-wrapper {
     margin-bottom: 20px;
+    position: relative;
+    z-index: 998;
 }
 
 #csvFileInput {
@@ -229,12 +245,12 @@ input:checked + .slider:before {
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
+    transition: all 0.3s ease;
     outline: none;
 }
 
 .file-input-button:hover {
-    background-color: #FF0000;
+    background-color: #cc0000;
     transform: translateY(-2px);
 }
 
@@ -248,21 +264,24 @@ body.dark-mode .file-input-button {
 }
 
 body.dark-mode .file-input-button:hover {
-    color: white;
-    background-color: #FF0000;
+    background-color: #cc0000;
 }
 
 #statisticsContainer {
     background-color: #f5f5f5;
     color: #2c3e50;
-    padding: 5px;
+    padding: 10px 20px;
     border-radius: 0px;
     text-align: center;
     display: flex;
     justify-content: space-around;
-    max-width: 400px;
+    align-items: center;
     width: 100%;
-    transition: position 0.3s, top 0.3s;
+    max-width: 400px;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    box-sizing: border-box;
 }
 
 #statisticsContainer.sticky {
@@ -270,40 +289,130 @@ body.dark-mode .file-input-button:hover {
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1000;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px 20px;
 }
 
 body.dark-mode #statisticsContainer {
     color: #ffffff;
     background-color: #121212;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 #statisticsContainer p {
     margin: 0;
     font-size: 0.9em;
+    padding: 0 10px;
 }
 
 #statisticsContainer span {
     font-weight: bold;
     font-size: 1.1em;
+    display: block;
+    margin-top: 3px;
 }
 
 #statisticsPlaceholder {
+    width: 100%;
     height: 0;
-    transition: height 0.3s;
+    transition: height 0.3s ease;
 }
 
+/* Loading animation for file input */
+.loading .file-input-button {
+    position: relative;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.loading .file-input-button:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Responsive Design */
 @media (max-width: 600px) {
-    #cards {
-        grid-template-columns: 1fr;
+    body {
+        padding: 10px;
     }
-    
+
     h1 {
         font-size: 2em;
+        margin-top: 70px;
+    }
+
+    .theme-switch-wrapper {
+        top: 15px;
+        right: 15px;
     }
 
     #statisticsContainer {
-        max-width: 100%;
+        padding: 8px 10px;
+    }
+
+    #statisticsContainer.sticky {
+        padding: 8px 10px;
+    }
+
+    #statisticsContainer p {
+        font-size: 0.8em;
+    }
+
+    #statisticsContainer span {
+        font-size: 1em;
+    }
+
+    #cards {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 16px;
     }
 }
+
+/* Smooth scrolling for the whole page */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+body.dark-mode ::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: #666;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: #888;
+        }
