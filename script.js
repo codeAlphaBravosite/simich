@@ -1,5 +1,22 @@
+// Global state
 let originalData = [];
 let viewedChannels = 0;
+
+// Load saved data from localStorage on startup
+function initializeLocalStorage() {
+    const savedData = localStorage.getItem('channelData');
+    if (savedData) {
+        originalData = JSON.parse(savedData);
+        displayCards(originalData);
+        document.getElementById('filterContainer').style.display = 'block';
+        initializeStatistics();
+    }
+}
+
+// Save data to localStorage
+function saveToLocalStorage() {
+    localStorage.setItem('channelData', JSON.stringify(originalData));
+}
 
 function loadFile(event) {
     const file = event.target.files[0];
@@ -8,7 +25,11 @@ function loadFile(event) {
         Papa.parse(file, {
             header: true,
             complete: function(results) {
-                originalData = results.data;
+                originalData = results.data.map(channel => ({
+                    ...channel,
+                    viewed: false // Ensure viewed property exists
+                }));
+                saveToLocalStorage(); // Save immediately after loading
                 displayCards(originalData);
                 document.getElementById('filterContainer').style.display = 'block';
                 initializeStatistics();
@@ -74,6 +95,9 @@ function displayCards(data) {
         const formattedSubs = formatSubscribers(parseSubscribers(channel['Subscribers']));
         const card = document.createElement('div');
         card.className = 'card';
+        if (channel.viewed) {
+            card.classList.add('viewed');
+        }
         card.dataset.index = index;
         card.innerHTML = `
             <div class="card-title">${channel['Channel Name']}</div>
@@ -93,6 +117,7 @@ function toggleVisibility(index) {
     card.classList.toggle('viewed');
     originalData[index].viewed = !originalData[index].viewed;
     updateStatistics();
+    saveToLocalStorage(); // Save after toggling visibility
 }
 
 function updateStatistics() {
@@ -105,53 +130,47 @@ function updateStatistics() {
     document.getElementById('remainingChannels').textContent = remainingChannels;
 }
 
-// Dark mode toggle
-const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
-
-function switchTheme(e) {
-    if (e.target.checked) {
-        document.body.classList.add('dark-mode');
-        localStorage.setItem('theme', 'dark');
-    } else {
-        document.body.classList.remove('dark-mode');
-        localStorage.setItem('theme', 'light');
-    }    
-}
-
-toggleSwitch.addEventListener('change', switchTheme, false);
-
-// Check for saved user preference, if any, on load of the website
-const currentTheme = localStorage.getItem('theme');
-if (currentTheme) {
-    document.body.classList[currentTheme === 'dark' ? 'add' : 'remove']('dark-mode');
-
-    if (currentTheme === 'dark') {
-        toggleSwitch.checked = true;
+function initializeStatistics() {
+    const statsContainer = document.getElementById('statisticsContainer');
+    const themeSwitch = document.querySelector('.theme-switch-wrapper');
+    
+    statsContainer.style.display = 'flex';
+    
+    // Create placeholder with proper spacing
+    let placeholder = document.getElementById('statisticsPlaceholder');
+    if (!placeholder) {
+        placeholder = document.createElement('div');
+        placeholder.id = 'statisticsPlaceholder';
+        statsContainer.insertAdjacentElement('beforebegin', placeholder);
     }
+    
+    updateStatistics();
+    makeStatisticsSticky();
 }
-
-// Initialize
-document.getElementById('filterContainer').style.display = 'none';
-document.getElementById('statisticsContainer').style.display = 'none';
-
-// ... (keep all existing code) ...
-
-// Add these new functions and event listener at the end of the file
 
 function makeStatisticsSticky() {
-    const statisticsContainer = document.getElementById('statisticsContainer');
+    const statsContainer = document.getElementById('statisticsContainer');
+    const themeSwitch = document.querySelector('.theme-switch-wrapper');
     const placeholder = document.getElementById('statisticsPlaceholder');
-    const statsRect = statisticsContainer.getBoundingClientRect();
-    const statsTop = statsRect.top;
-
-    if (window.pageYOffset > statsTop) {
-        if (!statisticsContainer.classList.contains('sticky')) {
-            statisticsContainer.classList.add('sticky');
+    const h1 = document.querySelector('h1');
+    
+    const statsRect = statsContainer.getBoundingClientRect();
+    const h1Rect = h1.getBoundingClientRect();
+    
+    if (window.pageYOffset > statsRect.top) {
+        if (!statsContainer.classList.contains('sticky')) {
+            statsContainer.classList.add('sticky');
             placeholder.style.height = `${statsRect.height}px`;
+            
+            // Ensure theme switch stays visible
+            themeSwitch.style.position = 'fixed';
+            themeSwitch.style.top = `${statsRect.height + 10}px`; // Add padding
         }
     } else {
-        statisticsContainer.classList.remove('sticky');
+        statsContainer.classList.remove('sticky');
         placeholder.style.height = '0';
+        themeSwitch.style.position = 'absolute';
+        themeSwitch.style.top = '25px';
     }
 }
 
@@ -169,34 +188,40 @@ function throttle(func, limit) {
     }
 }
 
-// Add event listener for scroll
-window.addEventListener('scroll', throttle(makeStatisticsSticky, 100));
+// Dark mode toggle functionality
+const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
 
-// Call this function after parsing the CSV and displaying the statistics
-function initializeStatistics() {
-    document.getElementById('statisticsContainer').style.display = 'flex';
-    const placeholder = document.createElement('div');
-    placeholder.id = 'statisticsPlaceholder';
-    document.getElementById('statisticsContainer').insertAdjacentElement('beforebegin', placeholder);
-    updateStatistics();
-    makeStatisticsSticky();
+function switchTheme(e) {
+    if (e.target.checked) {
+        document.body.classList.add('dark-mode');
+        localStorage.setItem('theme', 'dark');
+    } else {
+        document.body.classList.remove('dark-mode');
+        localStorage.setItem('theme', 'light');
+    }    
 }
 
-// Update the loadFile function to call initializeStatistics
-function loadFile(event) {
-    const file = event.target.files[0];
-    if (file) {
-        updateFileInputButton(file.name);
-        Papa.parse(file, {
-            header: true,
-            complete: function(results) {
-                originalData = results.data;
-                displayCards(originalData);
-                document.getElementById('filterContainer').style.display = 'block';
-                initializeStatistics();
-            }
-        });
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize local storage
+    initializeLocalStorage();
+    
+    // Add throttled scroll listener
+    window.addEventListener('scroll', throttle(makeStatisticsSticky, 100));
+    
+    // Initialize theme
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme) {
+        document.body.classList[currentTheme === 'dark' ? 'add' : 'remove']('dark-mode');
+        if (currentTheme === 'dark') {
+            toggleSwitch.checked = true;
+        }
     }
-}
-
-// ... (keep all existing code) ...
+    
+    // Add theme switch event listener
+    toggleSwitch.addEventListener('change', switchTheme, false);
+    
+    // Hide containers initially
+    document.getElementById('filterContainer').style.display = 'none';
+    document.getElementById('statisticsContainer').style.display = 'none';
+});
