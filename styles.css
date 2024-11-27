@@ -33,14 +33,11 @@ body.dark-mode h1 {
     position: static;
     top: 20px;
     right: 20px;
+    bottom: 10px;
     display: flex;
     align-items: center;
     padding: 8px;
     border-radius: 20px;
-}
-
-body.dark-mode .theme-switch-wrapper {
-    background-color: rgba(44, 44, 44, 0.9);
 }
 
 .theme-switch {
