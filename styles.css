@@ -37,8 +37,6 @@ body.dark-mode h1 {
     align-items: center;
     padding: 8px;
     border-radius: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transform: translateZ(0);
 }
 
 body.dark-mode .theme-switch-wrapper {
